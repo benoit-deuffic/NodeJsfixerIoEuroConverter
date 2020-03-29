@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Socket.io</title>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    </head>
+ 
+    <body>
+        <h1>Communication avec socket.io ! EuroConverter</h1>
+
+    <hr />
+     <form>
+       <input type='text' size='6' id='fldAmount'></input> EUR
+       <select id ='currencies'>
+
+       </select>
+     </form>
+    <span id='result' style="color:blue"></span>
+    <br />
+    <div id='error' style="color:red"></div>
+
+    <script>
+        var socket = io.connect('http://localhost:8081');
+
+        socket.on('error', function (message) {
+          $( '#error' ).append(message);
+          $( '#error' ).show();
+        });
+
+        socket.on('success', function (message) {
+          $( '#result' ).append(message);
+        });
+
+function reinitFields() {
+$( '#error').hide();
+$( '#result' ).empty();
+} 
+
+// déclencheur une fois la page html chargée
+      $( document ).ready(function() {
+             socket.emit('init');
+             socket.on('message', function(message) {
+               /* le service a répondu, récupérons nos résultats tel que spécifié dans la doc du service. */
+                  var data = JSON.parse(message);
+                  var results = data.symbols;
+                  
+                  /* ici on parcourt la collection d'obbets retournés par le service en récupérant le couple clé-valeur des devises
+                  *  et on remplie nos options sous la forme de texte html ( plus performant que de manipuler DOM )
+                  */
+
+                  for (let [key, value] of Object.entries(results)) {
+                       $( '#currencies' ).append("<option value='" + key + "'>" + value + "</option>\n");
+                     }
+          });
+     });
+
+     $( '#fldAmount' ).on("paste keyup change", function () {
+        reinitFields();
+        if ( $.isNumeric( $( '#fldAmount' ).val() ) === false ) { return; } 
+
+        console.log('emit convert event');
+        var params = { currency: $( '#currencies' ).val(), amount: $( '#fldAmount' ).val() };
+        socket.emit('convert', JSON.stringify(params));
+
+     });
+
+     $( '#currencies' ).on("change", function () {
+        reinitFields();
+        if ( $.isNumeric( $( '#fldAmount' ).val() ) === false ) { return; } 
+
+        console.log('emit convert event');
+        var params = { currency: $( '#currencies' ).val(), amount: $( '#fldAmount' ).val() };
+        socket.emit('convert',  JSON.stringify(params));
+       
+     });
+
+
+   </script>
+    
+    </body>
+</html>

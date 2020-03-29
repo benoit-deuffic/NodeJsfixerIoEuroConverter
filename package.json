@@ -1,0 +1,16 @@
+{
+  "name": "FixerIOConverter-nodejs",
+  "version": "1.0.0",
+  "description": "FixerIOConverter sur node.js",
+  "main": "app.js",
+  "dependencies": {
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "author": "Benoit DEUFFIC",
+  "license": "ISC"
+}
