@@ -63,7 +63,7 @@ Avoir docker et docker-compose.
 
 Une fois le dépot cloné:
 ```
-$ make compose
+$ make
 
 
 ```
